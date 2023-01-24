@@ -17,7 +17,34 @@ class ElementDraw(val container: ConstraintLayout) {
         val topMargin = y.toInt() - (y.toInt() % 50)
         val leftMargin = x.toInt() - (x.toInt() % 50)
         val coordinate = Coordinate(topMargin, leftMargin)
+        if (enterMaterial == Material.EMPTY) {
+            deleteView(coordinate)
+        } else {
+            drawOrReplaceView(coordinate)
+        }
+    }
+
+    private fun deleteView(coordinate: Coordinate){
+        val view = elementsMaterial.firstOrNull { it.coordinate== coordinate }
+        if (view != null) {
+            val viewDelete = container.findViewById<View>(view.viewId)
+            container.removeView(viewDelete)
+            elementsMaterial.remove(view)
+        }
+    }
+
+    private fun replaceView(coordinate: Coordinate){
+        deleteView(coordinate)
         drawView(coordinate)
+    }
+
+    private fun drawOrReplaceView(coordinate: Coordinate){
+        val view = elementsMaterial.firstOrNull { it.coordinate == coordinate }
+        if (view == null) {
+            drawView(coordinate)
+        } else if (view.material != enterMaterial) {
+            replaceView(coordinate)
+        }
     }
 
     private fun drawView( coordinate: Coordinate) {
