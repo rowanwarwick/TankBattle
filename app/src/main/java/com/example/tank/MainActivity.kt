@@ -6,20 +6,30 @@ import android.view.KeyEvent
 import android.view.KeyEvent.*
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import com.example.tank.databinding.ActivityMainBinding
-import java.nio.file.Files.move
 
 class MainActivity : AppCompatActivity() {
-    private val grid by lazy {
-        println("width: ${binding.container.height}")
-        GridDraw(this)
-    }
-
+    private var editMode = false
     private lateinit var binding: ActivityMainBinding
+    private val grid by lazy { GridDraw(this) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+    }
+
+    fun switchEdit() {
+        if (editMode) {
+            grid.removeGrid()
+            binding.material.visibility = GONE
+        } else {
+            grid.drawGrid()
+            binding.material.visibility = VISIBLE
+        }
+        editMode = !editMode
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -30,8 +40,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu -> {
-                println("type")
-                grid.drawGrid()
+                switchEdit()
                 return true
             }
             else -> super.onOptionsItemSelected(item)

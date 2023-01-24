@@ -5,10 +5,20 @@ import android.content.Context
 import android.view.View
 
 class GridDraw(private val contex: Context) {
+
+    private val lines = mutableListOf<View>()
+
     fun drawGrid() {
         val box = (contex as Activity).findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.container)
         horizontal(box)
         vertical(box)
+    }
+
+    fun removeGrid() {
+        val box = (contex as Activity).findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.container)
+        lines.forEach {
+            box.removeView(it)
+        }
     }
 
     private fun horizontal(container: androidx.constraintlayout.widget.ConstraintLayout) {
@@ -22,6 +32,7 @@ class GridDraw(private val contex: Context) {
             line.layoutParams = params
             line.setBackgroundColor(contex.resources.getColor(android.R.color.white))
             container.addView(line)
+            lines.add(line)
         }
     }
 
@@ -36,6 +47,7 @@ class GridDraw(private val contex: Context) {
             line.layoutParams = params
             line.setBackgroundColor(contex.resources.getColor(android.R.color.white))
             container.addView(line)
+            lines.add(line)
         }
     }
 }
