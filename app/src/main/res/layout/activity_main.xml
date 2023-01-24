@@ -38,28 +38,24 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:src="@drawable/clear"
-            android:background="@color/white"
-            />
+            android:background="@color/white" />
         <ImageView
             android:id="@+id/brick"
             android:layout_margin="8dp"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/brick"
-            />
+            android:src="@drawable/brick" />
         <ImageView
             android:id="@+id/concrete"
             android:layout_margin="8dp"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/concrete"
-            />
+            android:src="@drawable/concrete" />
         <ImageView
             android:id="@+id/grass"
             android:layout_margin="8dp"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/grass"
-            />
+            android:src="@drawable/grass" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
