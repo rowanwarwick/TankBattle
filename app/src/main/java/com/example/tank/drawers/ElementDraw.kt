@@ -12,7 +12,7 @@ import com.example.tank.models.Element
 class ElementDraw(val container: ConstraintLayout) {
 
     var enterMaterial = Material.EMPTY
-    private val elementsMaterial = mutableListOf<Element>()
+    val elementsMaterial = mutableListOf<Element>()
 
     fun onTouchContainer(x:Float, y:Float) {
         val topMargin = y.toInt() - (y.toInt() % 50)
@@ -68,62 +68,5 @@ class ElementDraw(val container: ConstraintLayout) {
         elementsMaterial.add(Element(viewId, enterMaterial, coordinate))
     }
 
-    fun move(myTank:View, direction: Direction) {
-        val layoutParams = myTank.layoutParams as ConstraintLayout.LayoutParams
-        val currentCoordTank = Coordinate(layoutParams.topMargin, layoutParams.leftMargin)
-        when (direction) {
-            Direction.LEFT -> {
-                myTank.rotation = 0f
-                if (layoutParams.topMargin > 0)
-                    layoutParams.topMargin -= 50
-            }
-            Direction.RIGHT -> {
-                myTank.rotation = 180f
-                if (layoutParams.topMargin + myTank.height < container.height)
-                    layoutParams.topMargin += 50
-            }
-            Direction.DOWN -> {
-                myTank.rotation = 270f
-                if (layoutParams.leftMargin > 0)
-                    layoutParams.leftMargin -= 50
-            }
-            Direction.UP -> {
-                myTank.rotation = 90f
-                if (layoutParams.leftMargin + myTank.width < container.width)
-                    layoutParams.leftMargin += 50
-            }
-        }
-        val nextCoordTank = Coordinate(layoutParams.topMargin, layoutParams.leftMargin)
-        if (checkTankCanMove(nextCoordTank, myTank)) {
-            container.removeView(myTank)
-            container.addView(myTank, 0)
-        } else {
-            layoutParams.topMargin = currentCoordTank.top
-            layoutParams.leftMargin = currentCoordTank.left
-        }
-    }
 
-    fun checkTankCanMove(coordinate: Coordinate, myTank: View):Boolean {
-        var check = false
-        if(coordinate.top >= 0 && coordinate.left >=0 && coordinate.top + myTank.height <= container.height && coordinate.left + myTank.width <= container.width)
-            check = true
-        if (check == true) {
-            getTankCoordinate(coordinate).forEach{ coord ->
-                val element = elementsMaterial.firstOrNull { it.coordinate== coord }
-                if (element != null && !element.material.prorerty) {
-                    check = false
-                }
-            }
-        }
-        return check
-    }
-
-    private fun getTankCoordinate(topLeftCoord:Coordinate):List<Coordinate>{
-        val coordinate = mutableListOf<Coordinate>()
-        coordinate.add(topLeftCoord)
-        coordinate.add(Coordinate(topLeftCoord.top + 50, topLeftCoord.left))
-        coordinate.add(Coordinate(topLeftCoord.top, topLeftCoord.left + 50))
-        coordinate.add(Coordinate(topLeftCoord.top + 50, topLeftCoord.left + 50))
-        return coordinate
-    }
 }

@@ -15,6 +15,8 @@ import com.example.tank.databinding.ActivityMainBinding
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.tank.drawers.ElementDraw
 import com.example.tank.drawers.GridDraw
+import com.example.tank.drawers.GunDraw
+import com.example.tank.drawers.TankDraw
 import com.example.tank.enums.Direction
 import com.example.tank.enums.Material
 import java.nio.file.Files.move
@@ -24,14 +26,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val grid by lazy { GridDraw(binding.container) }
     private val elementDraw by lazy { ElementDraw(binding.container) }
+    private val tankDraw by lazy { TankDraw(binding.container) }
+    private val gunDraw by lazy { GunDraw(binding.container) }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-        println(
-            TypedValue.applyDimension(
-            COMPLEX_UNIT_DIP,
-                40F,
-            resources.displayMetrics).toInt())
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -73,10 +72,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
-            KEYCODE_DPAD_UP -> elementDraw.move(binding.myTank, Direction.UP)
-            KEYCODE_DPAD_DOWN -> elementDraw.move(binding.myTank, Direction.DOWN)
-            KEYCODE_DPAD_LEFT -> elementDraw.move(binding.myTank, Direction.LEFT)
-            KEYCODE_DPAD_RIGHT -> elementDraw.move(binding.myTank, Direction.RIGHT)
+            KEYCODE_DPAD_UP -> tankDraw.move(binding.myTank, Direction.UP, elementDraw.elementsMaterial)
+            KEYCODE_DPAD_DOWN -> tankDraw.move(binding.myTank, Direction.DOWN, elementDraw.elementsMaterial)
+            KEYCODE_DPAD_LEFT -> tankDraw.move(binding.myTank, Direction.LEFT, elementDraw.elementsMaterial)
+            KEYCODE_DPAD_RIGHT -> tankDraw.move(binding.myTank, Direction.RIGHT, elementDraw.elementsMaterial)
+            KEYCODE_SPACE -> gunDraw.bulletMove(binding.myTank, tankDraw.currectDirection)
         }
         return super.onKeyDown(keyCode, event)
     }
