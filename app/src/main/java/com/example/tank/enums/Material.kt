@@ -1,8 +1,8 @@
 package com.example.tank.enums
 
-enum class Material {
-    EMPTY,
-    BRICK,
-    CONCRETE,
-    GRASS
+enum class Material(val prorerty:Boolean) {
+    EMPTY(true),
+    BRICK(false),
+    CONCRETE(false),
+    GRASS(true)
 }

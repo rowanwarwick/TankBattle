@@ -3,6 +3,8 @@ package com.example.tank
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.TypedValue
+import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.KeyEvent
 import android.view.KeyEvent.*
 import android.view.Menu
@@ -15,6 +17,7 @@ import com.example.tank.drawers.ElementDraw
 import com.example.tank.drawers.GridDraw
 import com.example.tank.enums.Direction
 import com.example.tank.enums.Material
+import java.nio.file.Files.move
 
 class MainActivity : AppCompatActivity() {
     private var editMode = false
@@ -24,6 +27,11 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
+        println(
+            TypedValue.applyDimension(
+            COMPLEX_UNIT_DIP,
+                40F,
+            resources.displayMetrics).toInt())
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -32,7 +40,6 @@ class MainActivity : AppCompatActivity() {
         binding.concrete.setOnClickListener { elementDraw.enterMaterial = Material.CONCRETE }
         binding.grass.setOnClickListener { elementDraw.enterMaterial = Material.GRASS }
         binding.container.setOnTouchListener { _, event ->
-            println("x: ${event.x}\ny: ${event.y}")
             elementDraw.onTouchContainer(event.x, event.y)
             return@setOnTouchListener true
         }
@@ -66,40 +73,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
-            KEYCODE_DPAD_UP -> move(Direction.UP)
-            KEYCODE_DPAD_DOWN -> move(Direction.DOWN)
-            KEYCODE_DPAD_LEFT -> move(Direction.LEFT)
-            KEYCODE_DPAD_RIGHT -> move(Direction.RIGHT)
+            KEYCODE_DPAD_UP -> elementDraw.move(binding.myTank, Direction.UP)
+            KEYCODE_DPAD_DOWN -> elementDraw.move(binding.myTank, Direction.DOWN)
+            KEYCODE_DPAD_LEFT -> elementDraw.move(binding.myTank, Direction.LEFT)
+            KEYCODE_DPAD_RIGHT -> elementDraw.move(binding.myTank, Direction.RIGHT)
         }
         return super.onKeyDown(keyCode, event)
     }
-
-    private fun move(direction: Direction) {
-        val layoutParams = binding.myTank.layoutParams as ConstraintLayout.LayoutParams
-        when (direction) {
-            Direction.UP -> {
-                binding.myTank.rotation = 0f
-                if (layoutParams.topMargin > 0)
-                    layoutParams.topMargin -= 50
-            }
-            Direction.DOWN -> {
-                binding.myTank.rotation = 180f
-                if (layoutParams.topMargin + binding.myTank.height < binding.container.height)
-                    layoutParams.topMargin += 50
-            }
-            Direction.LEFT -> {
-                binding.myTank.rotation = 270f
-                if (layoutParams.leftMargin > 0)
-                    layoutParams.leftMargin -= 50
-            }
-            Direction.RIGHT -> {
-                binding.myTank.rotation = 90f
-                if (layoutParams.leftMargin + binding.myTank.width < binding.container.width)
-                    layoutParams.leftMargin += 50
-            }
-        }
-        binding.container.removeView(binding.myTank)
-        binding.container.addView(binding.myTank)
-    }
-
 }
