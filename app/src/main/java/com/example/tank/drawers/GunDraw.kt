@@ -7,7 +7,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.tank.R
 import com.example.tank.enums.Direction
 import com.example.tank.models.Coordinate
-import com.example.tank.drawers.TankDraw.*
+import com.example.tank.models.Element
 import kotlin.text.Typography.bullet
 
 class GunDraw(val container: ConstraintLayout) {
@@ -17,10 +17,10 @@ class GunDraw(val container: ConstraintLayout) {
             val bullet = bullet(myTank, direction)
             while (checkOutBullet(bullet, Coordinate(bullet.top, bullet.left))) {
                 when (direction) {
-                    Direction.UP -> (bullet.layoutParams as ConstraintLayout.LayoutParams).leftMargin += 25
-                    Direction.DOWN -> (bullet.layoutParams as ConstraintLayout.LayoutParams).leftMargin -= 25
-                    Direction.LEFT -> (bullet.layoutParams as ConstraintLayout.LayoutParams).topMargin -= 25
-                    Direction.RIGHT -> (bullet.layoutParams as ConstraintLayout.LayoutParams).topMargin += 25
+                    Direction.UP -> (bullet.layoutParams as ConstraintLayout.LayoutParams).topMargin -= 25
+                    Direction.DOWN -> (bullet.layoutParams as ConstraintLayout.LayoutParams).topMargin += 25
+                    Direction.LEFT -> (bullet.layoutParams as ConstraintLayout.LayoutParams).leftMargin -= 25
+                    Direction.RIGHT -> (bullet.layoutParams as ConstraintLayout.LayoutParams).leftMargin  += 25
                 }
                 Thread.sleep(30)
                 (container.context as Activity).runOnUiThread{
@@ -34,10 +34,53 @@ class GunDraw(val container: ConstraintLayout) {
         }).start()
     }
 
-    fun checkOutBullet(bullet: ImageView, coordinate: Coordinate):Boolean {
-        if (coordinate.top >=0 && coordinate.left >= 0 && coordinate.top + bullet.height <= container.height && coordinate.left + bullet.width <= container.width)
-            return true
+    fun chooseDirection(elementsConteiner:MutableList<Element>, direction: Direction, bullet: Coordinate){
+        when (direction) {
+            Direction.UP, Direction.DOWN -> {
+                coordBlockRightOrLeft(bullet)
+            }
+            Direction.LEFT, Direction.RIGHT -> {
+                coordBlockTopOrDown(bullet)
+            }
+        }
+    }
+
+    fun checkElementInConteiner(elementsConteiner:List<Coordinate>, coordBlocks:List<Coordinate>): Boolean {
+        coordBlocks.forEach {
+            if (elementsConteiner.contains(it)) {
+                return true
+            }
+        }
         return false
+    }
+
+    fun removeElemInConteiner() {
+
+    }
+
+    fun compareCollections(elementsConteiner:MutableList<Element>, coordBlocks:List<Coordinate>) {
+
+    }
+
+    fun coordBlockTopOrDown(coordinate: Coordinate):List<Coordinate> {
+        val leftBlock = coordinate.left - coordinate.left % 50
+        val rightBlock = leftBlock + 50
+        val yCoord = coordinate.top - coordinate.top % 50
+        return listOf(Coordinate(yCoord, leftBlock), Coordinate(yCoord, rightBlock))
+    }
+
+    fun coordBlockRightOrLeft(coordinate: Coordinate):List<Coordinate> {
+        val topBlock = coordinate.top - coordinate.top % 50
+        val downBlock = topBlock + 50
+        val xCoord = coordinate.left - coordinate.left % 50
+        return listOf(Coordinate(topBlock, xCoord), Coordinate(downBlock, xCoord))
+    }
+
+    fun checkOutBullet(bullet: ImageView, coordinate: Coordinate):Boolean {
+        var res = false
+        if (coordinate.top >=0 && coordinate.left >= 0 && coordinate.top + bullet.height <= container.height && coordinate.left + bullet.width <= container.width)
+            res = true
+        return res
     }
 
     fun bullet(myTank: View, direction: Direction):ImageView{
@@ -57,20 +100,20 @@ class GunDraw(val container: ConstraintLayout) {
         val tankCoord = Coordinate(myTank.top, myTank.left)
         return when (direction) {
             Direction.UP -> {
-               Coordinate(top = tankCoord.top + 50 - bullet.layoutParams.height / 2,
-                   left = tankCoord.left + myTank.width)
+                Coordinate(top = tankCoord.top - bullet.layoutParams.height,
+                    left = tankCoord.left + 50 - bullet.layoutParams.width / 2)
             }
             Direction.DOWN -> {
-                Coordinate(top = tankCoord.top + 50 - bullet.layoutParams.height / 2,
-                    left = tankCoord.left - bullet.layoutParams.width)
-            }
-            Direction.RIGHT-> {
                 Coordinate(top = tankCoord.top + myTank.height,
                     left = tankCoord.left + 50 - bullet.layoutParams.width / 2)
             }
+            Direction.RIGHT-> {
+                Coordinate(top = tankCoord.top + 50 - bullet.layoutParams.height / 2,
+                    left = tankCoord.left + myTank.width)
+            }
             Direction.LEFT -> {
-                Coordinate(top = tankCoord.top - bullet.layoutParams.height,
-                    left = tankCoord.left + 50 - bullet.layoutParams.width / 2)
+                Coordinate(top = tankCoord.top + 50 - bullet.layoutParams.height / 2,
+                    left = tankCoord.left - bullet.layoutParams.width)
             }
         }
     }

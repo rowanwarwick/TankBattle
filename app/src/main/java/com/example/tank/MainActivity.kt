@@ -72,10 +72,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
-            KEYCODE_DPAD_UP -> tankDraw.move(binding.myTank, Direction.UP, elementDraw.elementsMaterial)
-            KEYCODE_DPAD_DOWN -> tankDraw.move(binding.myTank, Direction.DOWN, elementDraw.elementsMaterial)
-            KEYCODE_DPAD_LEFT -> tankDraw.move(binding.myTank, Direction.LEFT, elementDraw.elementsMaterial)
-            KEYCODE_DPAD_RIGHT -> tankDraw.move(binding.myTank, Direction.RIGHT, elementDraw.elementsMaterial)
+            KEYCODE_DPAD_UP -> {
+                println("UP")
+                tankDraw.move(binding.myTank, Direction.UP, elementDraw.elementsMaterial)
+            }
+            KEYCODE_DPAD_DOWN -> {
+                println("DOWN")
+                tankDraw.move(binding.myTank, Direction.DOWN, elementDraw.elementsMaterial)
+            }
+            KEYCODE_DPAD_LEFT -> {
+                println("LEFT")
+                tankDraw.move(binding.myTank, Direction.LEFT, elementDraw.elementsMaterial)
+            }
+            KEYCODE_DPAD_RIGHT -> {
+                println("RIGHT")
+                tankDraw.move(binding.myTank, Direction.RIGHT, elementDraw.elementsMaterial)
+            }
             KEYCODE_SPACE -> gunDraw.bulletMove(binding.myTank, tankDraw.currectDirection)
         }
         return super.onKeyDown(keyCode, event)

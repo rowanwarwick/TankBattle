@@ -8,7 +8,7 @@ import com.example.tank.models.Element
 
 class TankDraw(val container: ConstraintLayout) {
 
-    var currectDirection = Direction.DOWN
+    var currectDirection = Direction.UP
 
     fun move(myTank: View, direction: Direction, elementsMaterial:List<Element>) {
         val layoutParams = myTank.layoutParams as ConstraintLayout.LayoutParams
@@ -16,19 +16,19 @@ class TankDraw(val container: ConstraintLayout) {
         currectDirection = direction
         myTank.rotation = direction.rotation
         when (direction) {
-            Direction.LEFT -> {
+            Direction.UP -> {
                 if (layoutParams.topMargin > 0)
                     layoutParams.topMargin -= 50
             }
-            Direction.RIGHT -> {
+            Direction.DOWN -> {
                 if (layoutParams.topMargin + myTank.height < container.height)
                     layoutParams.topMargin += 50
             }
-            Direction.DOWN -> {
+            Direction.LEFT -> {
                 if (layoutParams.leftMargin > 0)
                     layoutParams.leftMargin -= 50
             }
-            Direction.UP -> {
+            Direction.RIGHT -> {
                 if (layoutParams.leftMargin + myTank.width < container.width)
                     layoutParams.leftMargin += 50
             }
@@ -41,12 +41,12 @@ class TankDraw(val container: ConstraintLayout) {
             layoutParams.topMargin = currentCoordTank.top
             layoutParams.leftMargin = currentCoordTank.left
         }
+        println(layoutParams.topMargin)
+        println(layoutParams.leftMargin)
     }
 
     fun checkPossibleMove(coordinate: Coordinate, view: View, elementsMaterial:List<Element>):Boolean {
         var check = false
-//        println("current coord: ${coordinate.top + view.height}, height conteiner: ${container.height}")
-//        println("current coord: ${coordinate.left + view.width}, height conteiner: ${container.width}")
         if(coordinate.top >= 0 && coordinate.left >=0 && coordinate.top + view.height <= container.height && coordinate.left + view.width <= container.width)
             check = true
         if (check == true) {
