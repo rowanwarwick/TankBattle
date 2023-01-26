@@ -17,6 +17,8 @@ import com.example.tank.drawers.TankDraw
 import com.example.tank.enums.Direction
 import com.example.tank.enums.Material
 
+const val CELL_SIZE = 50
+
 class MainActivity : AppCompatActivity() {
     private var editMode = false
     private lateinit var binding: ActivityMainBinding

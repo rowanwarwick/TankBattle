@@ -1,10 +1,8 @@
 package com.example.tank.drawers
 
-import android.app.Activity
-import android.content.Context
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.example.tank.R
+import com.example.tank.CELL_SIZE
 
 class GridDraw(private val container: ConstraintLayout) {
 
@@ -26,7 +24,7 @@ class GridDraw(private val container: ConstraintLayout) {
         while (topMargin <= container.height) {
             val line = View(container.context)
             val params = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 1)
-            topMargin += 50
+            topMargin += CELL_SIZE
             params.topMargin = topMargin
             params.topToTop = container.id
             line.layoutParams = params
@@ -41,7 +39,7 @@ class GridDraw(private val container: ConstraintLayout) {
         while (leftMargin <= container.width) {
             val line = View(container.context)
             val params = ConstraintLayout.LayoutParams(1, ConstraintLayout.LayoutParams.MATCH_PARENT)
-            leftMargin += 50
+            leftMargin += CELL_SIZE
             params.leftMargin = leftMargin
             params.leftToLeft = container.id
             line.layoutParams = params

@@ -13,8 +13,8 @@
         android:layout_height="match_parent">
         <ImageView
             android:id="@+id/myTank"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/size"
+            android:layout_height="@dimen/size"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,33 +35,33 @@
         <ImageView
             android:id="@+id/clear"
             android:layout_margin="8dp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/size"
+            android:layout_height="@dimen/size"
             android:src="@drawable/clear"
             android:background="@color/white" />
         <ImageView
             android:id="@+id/brick"
             android:layout_margin="8dp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/size"
+            android:layout_height="@dimen/size"
             android:src="@drawable/brick" />
         <ImageView
             android:id="@+id/concrete"
             android:layout_margin="8dp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/size"
+            android:layout_height="@dimen/size"
             android:src="@drawable/concrete" />
         <ImageView
             android:id="@+id/grass"
             android:layout_margin="8dp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/size"
+            android:layout_height="@dimen/size"
             android:src="@drawable/grass" />
         <ImageView
             android:id="@+id/eagle"
             android:layout_margin="8dp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/size"
+            android:layout_height="@dimen/size"
             android:src="@drawable/eagle" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

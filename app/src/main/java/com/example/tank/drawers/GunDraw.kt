@@ -75,7 +75,6 @@ class GunDraw(val container: ConstraintLayout) {
     fun compareCollections(elementsContainer:MutableList<Element>, cordBlocks:List<Coordinate>) {
         cordBlocks.forEach { block ->
             val view = getElementOrNull(block, elementsContainer)
-//            val view = elementsContainer.firstOrNull { it.coordinate == block }
             removeElemInConteiner(view, elementsContainer)
         }
     }

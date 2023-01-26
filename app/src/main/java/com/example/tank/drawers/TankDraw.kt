@@ -2,6 +2,7 @@ package com.example.tank.drawers
 
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.example.tank.CELL_SIZE
 import com.example.tank.enums.Direction
 import com.example.tank.models.Coordinate
 import com.example.tank.models.Element
@@ -18,19 +19,19 @@ class TankDraw(val container: ConstraintLayout) {
         when (direction) {
             Direction.UP -> {
                 if (layoutParams.topMargin > 0)
-                    layoutParams.topMargin -= 50
+                    layoutParams.topMargin -= CELL_SIZE
             }
             Direction.DOWN -> {
                 if (layoutParams.topMargin + myTank.height < container.height)
-                    layoutParams.topMargin += 50
+                    layoutParams.topMargin += CELL_SIZE
             }
             Direction.LEFT -> {
                 if (layoutParams.leftMargin > 0)
-                    layoutParams.leftMargin -= 50
+                    layoutParams.leftMargin -= CELL_SIZE
             }
             Direction.RIGHT -> {
                 if (layoutParams.leftMargin + myTank.width < container.width)
-                    layoutParams.leftMargin += 50
+                    layoutParams.leftMargin += CELL_SIZE
             }
         }
         val nextCoordTank = Coordinate(layoutParams.topMargin, layoutParams.leftMargin)
@@ -45,7 +46,8 @@ class TankDraw(val container: ConstraintLayout) {
 
     fun checkPossibleMove(coordinate: Coordinate, view: View, elementsMaterial:List<Element>):Boolean {
         var check = false
-        if(coordinate.top >= 0 && coordinate.left >=0 && coordinate.top + view.height <= container.height && coordinate.left + view.width <= container.width)
+        if(coordinate.top >= 0 && coordinate.left >= 0 &&
+            coordinate.top + view.height <= container.height && coordinate.left + view.width <= container.width)
             check = true
         if (check == true) {
             getTankCoordinate(coordinate).forEach{ coord ->
@@ -61,9 +63,9 @@ class TankDraw(val container: ConstraintLayout) {
     private fun getTankCoordinate(topLeftCoord: Coordinate):List<Coordinate>{
         val coordinate = mutableListOf<Coordinate>()
         coordinate.add(topLeftCoord)
-        coordinate.add(Coordinate(topLeftCoord.top + 50, topLeftCoord.left))
-        coordinate.add(Coordinate(topLeftCoord.top, topLeftCoord.left + 50))
-        coordinate.add(Coordinate(topLeftCoord.top + 50, topLeftCoord.left + 50))
+        coordinate.add(Coordinate(topLeftCoord.top + CELL_SIZE, topLeftCoord.left))
+        coordinate.add(Coordinate(topLeftCoord.top, topLeftCoord.left + CELL_SIZE))
+        coordinate.add(Coordinate(topLeftCoord.top + CELL_SIZE, topLeftCoord.left + CELL_SIZE))
         return coordinate
     }
 }

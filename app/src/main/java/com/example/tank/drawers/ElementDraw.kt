@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.example.tank.CELL_SIZE
 import com.example.tank.R
 import com.example.tank.enums.Material
 import com.example.tank.models.Coordinate
@@ -16,8 +17,8 @@ class ElementDraw(val container: ConstraintLayout) {
     val elementsMaterial = mutableListOf<Element>()
 
     fun onTouchContainer(x:Float, y:Float) {
-        val topMargin = y.toInt() - (y.toInt() % 50)
-        val leftMargin = x.toInt() - (x.toInt() % 50)
+        val topMargin = y.toInt() - (y.toInt() % CELL_SIZE)
+        val leftMargin = x.toInt() - (x.toInt() % CELL_SIZE)
         val coordinate = Coordinate(topMargin, leftMargin)
         if (enterMaterial == Material.EMPTY) {
             deleteView(coordinate)
@@ -28,7 +29,6 @@ class ElementDraw(val container: ConstraintLayout) {
 
     private fun deleteView(coordinate: Coordinate){
         val view = getElementOrNull(coordinate, elementsMaterial)
-//        val view = elementsMaterial.firstOrNull { it.coordinate== coordinate }
         if (view != null) {
             val viewDelete = container.findViewById<View>(view.viewId)
             container.removeView(viewDelete)
@@ -43,7 +43,6 @@ class ElementDraw(val container: ConstraintLayout) {
 
     private fun drawOrReplaceView(coordinate: Coordinate){
         val view = getElementOrNull(coordinate, elementsMaterial)
-//        val view = elementsMaterial.firstOrNull { it.coordinate == coordinate }
         if (view == null) {
             selectMaterial(coordinate)
         } else if (view.material != enterMaterial) {
@@ -55,7 +54,7 @@ class ElementDraw(val container: ConstraintLayout) {
         when (enterMaterial) {
             Material.EAGLE -> {
                 elementsMaterial.firstOrNull { it.material == Material.EAGLE }?.coordinate?.let { deleteView(it) }
-                drawView(R.drawable.eagle, coordinate, 4, 4)
+                drawView(R.drawable.eagle, coordinate, 2, 2)
             }
             Material.BRICK -> drawView(R.drawable.brick, coordinate)
             Material.CONCRETE -> drawView(R.drawable.concrete, coordinate)
@@ -66,7 +65,7 @@ class ElementDraw(val container: ConstraintLayout) {
 
     private fun drawView(image:Int, coordinate: Coordinate, width: Int = 1, height: Int = 1){
         val view = ImageView(container.context)
-        val layoutParams = ConstraintLayout.LayoutParams(width * 50, height * 50)
+        val layoutParams = ConstraintLayout.LayoutParams(width * CELL_SIZE, height * CELL_SIZE)
         val viewId = View.generateViewId()
         layoutParams.topMargin = coordinate.top
         layoutParams.leftMargin = coordinate.left
