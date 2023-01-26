@@ -8,6 +8,7 @@ import com.example.tank.R
 import com.example.tank.enums.Direction
 import com.example.tank.models.Coordinate
 import com.example.tank.models.Element
+import kotlin.text.Typography.bullet
 
 class GunDraw(val container: ConstraintLayout) {
 
@@ -30,7 +31,7 @@ class GunDraw(val container: ConstraintLayout) {
                     (bullet.layoutParams as ConstraintLayout.LayoutParams).leftMargin ))
                 (container.context as Activity).runOnUiThread{
                     container.removeView(bullet)
-                    container.addView(bullet)
+                    container.addView(bullet, 0)
                 }
             }
             (container.context as Activity).runOnUiThread {
@@ -55,42 +56,35 @@ class GunDraw(val container: ConstraintLayout) {
         return listOf(Coordinate(topBlock, xCoord), Coordinate(downBlock, xCoord))
     }
 
-    fun checkElementInConteiner(elementsContainer:List<Coordinate>, cordBlocks:List<Coordinate>): Boolean {
-        cordBlocks.forEach {
-            if (elementsContainer.contains(it)) {
-                return true
-            }
-        }
-        return false
-    }
-
-    fun removeElemInConteiner(element: Element?, elementsConteiner: MutableList<Element>) {
+    fun removeElemInConteiner(element: Element?, elementsContainer: MutableList<Element>) {
         if (element != null) {
-            val activity = container.context as Activity
-            activity.runOnUiThread{
-                container.removeView(activity.findViewById(element.viewId))
-            }
-            elementsConteiner.remove(element)
-            workThread = false
-        }
-    }
-
-    fun compareCollections(elementsConteiner:MutableList<Element>, coordBlocks:List<Coordinate>) {
-        if (checkElementInConteiner(elementsConteiner.map { it.coordinate }, coordBlocks)) {
-            coordBlocks.forEach {block ->
-                val view = elementsConteiner.firstOrNull { it.coordinate == block }
-                removeElemInConteiner(view, elementsConteiner)
+            if (!element.material.bulletCanGo) {
+                if (element.material.canDestroy) {
+                    val activity = container.context as Activity
+                    activity.runOnUiThread {
+                        container.removeView(activity.findViewById(element.viewId))
+                    }
+                    elementsContainer.remove(element)
+                }
+                workThread = false
             }
         }
     }
 
-    fun chooseDirection(elementsConteiner:MutableList<Element>, direction: Direction, bullet: Coordinate){
+    fun compareCollections(elementsContainer:MutableList<Element>, cordBlocks:List<Coordinate>) {
+        cordBlocks.forEach { block ->
+            val view = elementsContainer.firstOrNull { it.coordinate == block }
+            removeElemInConteiner(view, elementsContainer)
+        }
+    }
+
+    fun chooseDirection(elementsContainer:MutableList<Element>, direction: Direction, bullet: Coordinate){
         when (direction) {
             Direction.UP, Direction.DOWN -> {
-                compareCollections(elementsConteiner, coordBlockTopOrDown(bullet))
+                compareCollections(elementsContainer, coordBlockTopOrDown(bullet))
             }
             Direction.LEFT, Direction.RIGHT -> {
-                compareCollections(elementsConteiner,coordBlockRightOrLeft(bullet))
+                compareCollections(elementsContainer,coordBlockRightOrLeft(bullet))
             }
         }
     }

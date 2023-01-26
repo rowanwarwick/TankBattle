@@ -50,7 +50,7 @@ class TankDraw(val container: ConstraintLayout) {
         if (check == true) {
             getTankCoordinate(coordinate).forEach{ coord ->
                 val element = elementsMaterial.firstOrNull { it.coordinate== coord }
-                if (element != null && !element.material.prorerty) {
+                if (element != null && !element.material.tankCanGo) {
                     check = false
                 }
             }
