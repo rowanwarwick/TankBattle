@@ -41,8 +41,6 @@ class TankDraw(val container: ConstraintLayout) {
             layoutParams.topMargin = currentCoordTank.top
             layoutParams.leftMargin = currentCoordTank.left
         }
-        println(layoutParams.topMargin)
-        println(layoutParams.leftMargin)
     }
 
     fun checkPossibleMove(coordinate: Coordinate, view: View, elementsMaterial:List<Element>):Boolean {

@@ -1,25 +1,21 @@
 package com.example.tank
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.TypedValue
-import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.KeyEvent
 import android.view.KeyEvent.*
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.appcompat.app.AppCompatActivity
 import com.example.tank.databinding.ActivityMainBinding
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.tank.drawers.ElementDraw
 import com.example.tank.drawers.GridDraw
 import com.example.tank.drawers.GunDraw
 import com.example.tank.drawers.TankDraw
 import com.example.tank.enums.Direction
 import com.example.tank.enums.Material
-import java.nio.file.Files.move
 
 class MainActivity : AppCompatActivity() {
     private var editMode = false
@@ -73,22 +69,18 @@ class MainActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KEYCODE_DPAD_UP -> {
-                println("UP")
                 tankDraw.move(binding.myTank, Direction.UP, elementDraw.elementsMaterial)
             }
             KEYCODE_DPAD_DOWN -> {
-                println("DOWN")
                 tankDraw.move(binding.myTank, Direction.DOWN, elementDraw.elementsMaterial)
             }
             KEYCODE_DPAD_LEFT -> {
-                println("LEFT")
                 tankDraw.move(binding.myTank, Direction.LEFT, elementDraw.elementsMaterial)
             }
             KEYCODE_DPAD_RIGHT -> {
-                println("RIGHT")
                 tankDraw.move(binding.myTank, Direction.RIGHT, elementDraw.elementsMaterial)
             }
-            KEYCODE_SPACE -> gunDraw.bulletMove(binding.myTank, tankDraw.currectDirection)
+            KEYCODE_SPACE -> gunDraw.bulletMove(binding.myTank, tankDraw.currectDirection, elementDraw.elementsMaterial)
         }
         return super.onKeyDown(keyCode, event)
     }

@@ -8,14 +8,17 @@ import com.example.tank.R
 import com.example.tank.enums.Direction
 import com.example.tank.models.Coordinate
 import com.example.tank.models.Element
-import kotlin.text.Typography.bullet
 
 class GunDraw(val container: ConstraintLayout) {
 
-    fun bulletMove (myTank: View, direction: Direction) {
-        Thread( Runnable {
+    private var workThread = true
+    private val arrThread = mutableListOf<Thread>()
+
+    fun bulletMove (myTank: View, direction: Direction, elementsConteiner: MutableList<Element>) {
+        val bulletThread = Thread( Runnable {
             val bullet = bullet(myTank, direction)
-            while (checkOutBullet(bullet, Coordinate(bullet.top, bullet.left))) {
+            workThread = true
+            while (checkOutBullet(bullet, Coordinate(bullet.top, bullet.left)) && workThread) {
                 when (direction) {
                     Direction.UP -> (bullet.layoutParams as ConstraintLayout.LayoutParams).topMargin -= 25
                     Direction.DOWN -> (bullet.layoutParams as ConstraintLayout.LayoutParams).topMargin += 25
@@ -23,6 +26,8 @@ class GunDraw(val container: ConstraintLayout) {
                     Direction.RIGHT -> (bullet.layoutParams as ConstraintLayout.LayoutParams).leftMargin  += 25
                 }
                 Thread.sleep(30)
+                chooseDirection(elementsConteiner, direction, Coordinate((bullet.layoutParams as ConstraintLayout.LayoutParams).topMargin,
+                    (bullet.layoutParams as ConstraintLayout.LayoutParams).leftMargin ))
                 (container.context as Activity).runOnUiThread{
                     container.removeView(bullet)
                     container.addView(bullet)
@@ -31,35 +36,9 @@ class GunDraw(val container: ConstraintLayout) {
             (container.context as Activity).runOnUiThread {
                 container.removeView(bullet)
             }
-        }).start()
-    }
-
-    fun chooseDirection(elementsConteiner:MutableList<Element>, direction: Direction, bullet: Coordinate){
-        when (direction) {
-            Direction.UP, Direction.DOWN -> {
-                coordBlockRightOrLeft(bullet)
-            }
-            Direction.LEFT, Direction.RIGHT -> {
-                coordBlockTopOrDown(bullet)
-            }
-        }
-    }
-
-    fun checkElementInConteiner(elementsConteiner:List<Coordinate>, coordBlocks:List<Coordinate>): Boolean {
-        coordBlocks.forEach {
-            if (elementsConteiner.contains(it)) {
-                return true
-            }
-        }
-        return false
-    }
-
-    fun removeElemInConteiner() {
-
-    }
-
-    fun compareCollections(elementsConteiner:MutableList<Element>, coordBlocks:List<Coordinate>) {
-
+        })
+        arrThread.add(bulletThread)
+        bulletThread!!.start()
     }
 
     fun coordBlockTopOrDown(coordinate: Coordinate):List<Coordinate> {
@@ -74,6 +53,46 @@ class GunDraw(val container: ConstraintLayout) {
         val downBlock = topBlock + 50
         val xCoord = coordinate.left - coordinate.left % 50
         return listOf(Coordinate(topBlock, xCoord), Coordinate(downBlock, xCoord))
+    }
+
+    fun checkElementInConteiner(elementsContainer:List<Coordinate>, cordBlocks:List<Coordinate>): Boolean {
+        cordBlocks.forEach {
+            if (elementsContainer.contains(it)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fun removeElemInConteiner(element: Element?, elementsConteiner: MutableList<Element>) {
+        if (element != null) {
+            val activity = container.context as Activity
+            activity.runOnUiThread{
+                container.removeView(activity.findViewById(element.viewId))
+            }
+            elementsConteiner.remove(element)
+            workThread = false
+        }
+    }
+
+    fun compareCollections(elementsConteiner:MutableList<Element>, coordBlocks:List<Coordinate>) {
+        if (checkElementInConteiner(elementsConteiner.map { it.coordinate }, coordBlocks)) {
+            coordBlocks.forEach {block ->
+                val view = elementsConteiner.firstOrNull { it.coordinate == block }
+                removeElemInConteiner(view, elementsConteiner)
+            }
+        }
+    }
+
+    fun chooseDirection(elementsConteiner:MutableList<Element>, direction: Direction, bullet: Coordinate){
+        when (direction) {
+            Direction.UP, Direction.DOWN -> {
+                compareCollections(elementsConteiner, coordBlockTopOrDown(bullet))
+            }
+            Direction.LEFT, Direction.RIGHT -> {
+                compareCollections(elementsConteiner,coordBlockRightOrLeft(bullet))
+            }
+        }
     }
 
     fun checkOutBullet(bullet: ImageView, coordinate: Coordinate):Boolean {
