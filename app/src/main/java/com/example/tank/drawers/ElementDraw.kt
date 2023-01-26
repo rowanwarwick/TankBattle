@@ -2,12 +2,13 @@ package com.example.tank.drawers
 
 import android.view.View
 import android.widget.ImageView
+import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.tank.R
-import com.example.tank.enums.Direction
 import com.example.tank.enums.Material
 import com.example.tank.models.Coordinate
 import com.example.tank.models.Element
+import com.example.tank.utils.getElementOrNull
 
 class ElementDraw(val container: ConstraintLayout) {
 
@@ -26,7 +27,8 @@ class ElementDraw(val container: ConstraintLayout) {
     }
 
     private fun deleteView(coordinate: Coordinate){
-        val view = elementsMaterial.firstOrNull { it.coordinate== coordinate }
+        val view = getElementOrNull(coordinate, elementsMaterial)
+//        val view = elementsMaterial.firstOrNull { it.coordinate== coordinate }
         if (view != null) {
             val viewDelete = container.findViewById<View>(view.viewId)
             container.removeView(viewDelete)
@@ -36,37 +38,44 @@ class ElementDraw(val container: ConstraintLayout) {
 
     private fun replaceView(coordinate: Coordinate){
         deleteView(coordinate)
-        drawView(coordinate)
+        selectMaterial(coordinate)
     }
 
     private fun drawOrReplaceView(coordinate: Coordinate){
-        val view = elementsMaterial.firstOrNull { it.coordinate == coordinate }
+        val view = getElementOrNull(coordinate, elementsMaterial)
+//        val view = elementsMaterial.firstOrNull { it.coordinate == coordinate }
         if (view == null) {
-            drawView(coordinate)
+            selectMaterial(coordinate)
         } else if (view.material != enterMaterial) {
             replaceView(coordinate)
         }
     }
 
-    private fun drawView( coordinate: Coordinate) {
-        val view = ImageView(container.context)
-        val layoutParams = ConstraintLayout.LayoutParams(50, 50)
-        val viewId = View.generateViewId()
+    private fun selectMaterial(coordinate: Coordinate) {
         when (enterMaterial) {
+            Material.EAGLE -> {
+                elementsMaterial.firstOrNull { it.material == Material.EAGLE }?.coordinate?.let { deleteView(it) }
+                drawView(R.drawable.eagle, coordinate, 4, 4)
+            }
+            Material.BRICK -> drawView(R.drawable.brick, coordinate)
+            Material.CONCRETE -> drawView(R.drawable.concrete, coordinate)
+            Material.GRASS -> drawView(R.drawable.grass, coordinate)
             Material.EMPTY -> {}
-            Material.BRICK -> view.setImageResource(R.drawable.brick)
-            Material.CONCRETE -> view.setImageResource(R.drawable.concrete)
-            Material.GRASS -> view.setImageResource(R.drawable.grass)
         }
+    }
+
+    private fun drawView(image:Int, coordinate: Coordinate, width: Int = 1, height: Int = 1){
+        val view = ImageView(container.context)
+        val layoutParams = ConstraintLayout.LayoutParams(width * 50, height * 50)
+        val viewId = View.generateViewId()
         layoutParams.topMargin = coordinate.top
         layoutParams.leftMargin = coordinate.left
         layoutParams.topToTop = container.id
         layoutParams.leftToLeft = container.id
+        view.setImageResource(image)
         view.id = viewId
         view.layoutParams = layoutParams
         container.addView(view)
-        elementsMaterial.add(Element(viewId, enterMaterial, coordinate))
+        elementsMaterial.add(Element(viewId, enterMaterial, coordinate, width, height))
     }
-
-
 }

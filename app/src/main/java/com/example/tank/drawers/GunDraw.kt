@@ -8,6 +8,7 @@ import com.example.tank.R
 import com.example.tank.enums.Direction
 import com.example.tank.models.Coordinate
 import com.example.tank.models.Element
+import com.example.tank.utils.getElementOrNull
 import kotlin.text.Typography.bullet
 
 class GunDraw(val container: ConstraintLayout) {
@@ -73,7 +74,8 @@ class GunDraw(val container: ConstraintLayout) {
 
     fun compareCollections(elementsContainer:MutableList<Element>, cordBlocks:List<Coordinate>) {
         cordBlocks.forEach { block ->
-            val view = elementsContainer.firstOrNull { it.coordinate == block }
+            val view = getElementOrNull(block, elementsContainer)
+//            val view = elementsContainer.firstOrNull { it.coordinate == block }
             removeElemInConteiner(view, elementsContainer)
         }
     }
