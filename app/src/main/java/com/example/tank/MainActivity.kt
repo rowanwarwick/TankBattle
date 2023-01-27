@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     private val elementDraw by lazy { ElementDraw(binding.container) }
     private val tankDraw by lazy { TankDraw(binding.container) }
     private val gunDraw by lazy { GunDraw(binding.container) }
-    private val levelStorage by lazy {LevelStorage(this as Activity)}
+    private val levelStorage by lazy { LevelStorage(this as Activity) }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {

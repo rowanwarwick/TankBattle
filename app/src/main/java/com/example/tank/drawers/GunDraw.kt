@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.View
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.example.tank.CELL_SIZE
 import com.example.tank.R
 import com.example.tank.enums.Direction
 import com.example.tank.models.Coordinate
@@ -14,7 +15,6 @@ import kotlin.text.Typography.bullet
 class GunDraw(val container: ConstraintLayout) {
 
     private var workThread = true
-    private val arrThread = mutableListOf<Thread>()
 
     fun bulletMove (myTank: View, direction: Direction, elementsConteiner: MutableList<Element>) {
         val bulletThread = Thread( Runnable {
@@ -39,21 +39,20 @@ class GunDraw(val container: ConstraintLayout) {
                 container.removeView(bullet)
             }
         })
-        arrThread.add(bulletThread)
         bulletThread!!.start()
     }
 
     fun coordBlockTopOrDown(coordinate: Coordinate):List<Coordinate> {
-        val leftBlock = coordinate.left - coordinate.left % 50
-        val rightBlock = leftBlock + 50
-        val yCoord = coordinate.top - coordinate.top % 50
+        val leftBlock = coordinate.left - coordinate.left % CELL_SIZE
+        val rightBlock = leftBlock + CELL_SIZE
+        val yCoord = coordinate.top - coordinate.top % CELL_SIZE
         return listOf(Coordinate(yCoord, leftBlock), Coordinate(yCoord, rightBlock))
     }
 
     fun coordBlockRightOrLeft(coordinate: Coordinate):List<Coordinate> {
-        val topBlock = coordinate.top - coordinate.top % 50
-        val downBlock = topBlock + 50
-        val xCoord = coordinate.left - coordinate.left % 50
+        val topBlock = coordinate.top - coordinate.top % CELL_SIZE
+        val downBlock = topBlock + CELL_SIZE
+        val xCoord = coordinate.left - coordinate.left % CELL_SIZE
         return listOf(Coordinate(topBlock, xCoord), Coordinate(downBlock, xCoord))
     }
 
@@ -85,14 +84,15 @@ class GunDraw(val container: ConstraintLayout) {
                 compareCollections(elementsContainer, coordBlockTopOrDown(bullet))
             }
             Direction.LEFT, Direction.RIGHT -> {
-                compareCollections(elementsContainer,coordBlockRightOrLeft(bullet))
+                compareCollections(elementsContainer, coordBlockRightOrLeft(bullet))
             }
         }
     }
 
     fun checkOutBullet(bullet: ImageView, coordinate: Coordinate):Boolean {
         var res = false
-        if (coordinate.top >=0 && coordinate.left >= 0 && coordinate.top + bullet.height <= container.height && coordinate.left + bullet.width <= container.width)
+        if (coordinate.top >= 0 && coordinate.left >= 0 &&
+            coordinate.top + bullet.height <= container.height && coordinate.left + bullet.width <= container.width)
             res = true
         return res
     }
@@ -115,18 +115,18 @@ class GunDraw(val container: ConstraintLayout) {
         return when (direction) {
             Direction.UP -> {
                 Coordinate(top = tankCoord.top - bullet.layoutParams.height,
-                    left = tankCoord.left + 50 - bullet.layoutParams.width / 2)
+                    left = tankCoord.left + CELL_SIZE - bullet.layoutParams.width / 2)
             }
             Direction.DOWN -> {
                 Coordinate(top = tankCoord.top + myTank.height,
-                    left = tankCoord.left + 50 - bullet.layoutParams.width / 2)
+                    left = tankCoord.left + CELL_SIZE - bullet.layoutParams.width / 2)
             }
             Direction.RIGHT-> {
-                Coordinate(top = tankCoord.top + 50 - bullet.layoutParams.height / 2,
+                Coordinate(top = tankCoord.top + CELL_SIZE - bullet.layoutParams.height / 2,
                     left = tankCoord.left + myTank.width)
             }
             Direction.LEFT -> {
-                Coordinate(top = tankCoord.top + 50 - bullet.layoutParams.height / 2,
+                Coordinate(top = tankCoord.top + CELL_SIZE - bullet.layoutParams.height / 2,
                     left = tankCoord.left - bullet.layoutParams.width)
             }
         }

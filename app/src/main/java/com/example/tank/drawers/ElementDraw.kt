@@ -4,7 +4,6 @@ import android.view.View
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.tank.CELL_SIZE
-import com.example.tank.R
 import com.example.tank.enums.Material
 import com.example.tank.models.Coordinate
 import com.example.tank.models.Element
@@ -20,69 +19,80 @@ class ElementDraw(val container: ConstraintLayout) {
         val leftMargin = x.toInt() - (x.toInt() % CELL_SIZE)
         val coordinate = Coordinate(topMargin, leftMargin)
         if (enterMaterial == Material.EMPTY) {
-            deleteView(coordinate)
+            deleteFromView(coordinate)
         } else {
             drawOrReplaceView(coordinate)
         }
     }
 
-    private fun deleteView(coordinate: Coordinate){
-        val view = getElementOrNull(coordinate, elementsContainer)
-        if (view != null) {
-            val viewDelete = container.findViewById<View>(view.viewId)
-            container.removeView(viewDelete)
-            elementsContainer.remove(view)
+    private fun deleteFromView(coordinate: Coordinate){
+        for (element in getElementsUnderBigElement(coordinate)) {
+            deleteElement(element)
         }
     }
 
-    private fun replaceView(coordinate: Coordinate){
-        deleteView(coordinate)
-        selectMaterial(coordinate)
+    private fun updateView(coordinate: Coordinate){
+        deleteFromView(coordinate)
+        drawView(coordinate)
     }
 
     private fun drawOrReplaceView(coordinate: Coordinate){
         val view = getElementOrNull(coordinate, elementsContainer)
         if (view == null) {
-            selectMaterial(coordinate)
+            drawView(coordinate)
         } else if (view.material != enterMaterial) {
-            replaceView(coordinate)
+            updateView(coordinate)
         }
     }
 
-    private fun selectMaterial(coordinate: Coordinate) {
-        when (enterMaterial) {
-            Material.EAGLE -> {
-                elementsContainer.firstOrNull { it.material == Material.EAGLE }?.coordinate?.let { deleteView(it) }
-                drawView(R.drawable.eagle, coordinate, 2, 2)
-            }
-            Material.BRICK -> drawView(R.drawable.brick, coordinate)
-            Material.CONCRETE -> drawView(R.drawable.concrete, coordinate)
-            Material.GRASS -> drawView(R.drawable.grass, coordinate)
-            Material.EMPTY -> {}
-        }
-    }
-
-    private fun drawView(image:Int, coordinate: Coordinate, width: Int = 1, height: Int = 1){
+    private fun drawView(coordinate: Coordinate){
         val view = ImageView(container.context)
-        val layoutParams = ConstraintLayout.LayoutParams(width * CELL_SIZE, height * CELL_SIZE)
-        val viewId = View.generateViewId()
+        val layoutParams = ConstraintLayout.LayoutParams(enterMaterial.width * CELL_SIZE, enterMaterial.height * CELL_SIZE)
+        if (enterMaterial.onlyOne) elementsContainer.firstOrNull { it.material == enterMaterial }?.coordinate?.let { deleteFromView(it) }
         layoutParams.topMargin = coordinate.top
         layoutParams.leftMargin = coordinate.left
         layoutParams.topToTop = container.id
         layoutParams.leftToLeft = container.id
-        view.setImageResource(image)
-        view.id = viewId
+        view.setImageResource(enterMaterial.image)
         view.layoutParams = layoutParams
+        val element = Element(material =  enterMaterial, coordinate = coordinate, width = enterMaterial.width, height = enterMaterial.height)
+        view.id = element.viewId
+        view.scaleType = ImageView.ScaleType.FIT_XY // растягивае изображения по ХУ
         container.addView(view)
-        elementsContainer.add(Element(viewId, enterMaterial, coordinate, width, height))
+        elementsContainer.add(element)
     }
 
     fun drawElementOnStartGame(elements:List<Element>?) {
         if (elements != null) {
             for (element in elements) {
                 enterMaterial = element.material
-                selectMaterial(element.coordinate)
+                drawView(element.coordinate)
             }
         }
+    }
+
+    fun deleteElement(element:Element?) {
+        if (element != null) {
+            val viewDelete = container.findViewById<View>(element.viewId)
+            container.removeView(viewDelete)
+            elementsContainer.remove(element)
+        }
+    }
+
+    fun getElementsUnderBigElement(coordinate: Coordinate):List<Element> {
+        val elements = mutableListOf<Element>()
+        for (element in elementsContainer) {
+            for (height in 0 until enterMaterial.height) {
+                for (width in 0 until enterMaterial.width) {
+                    if (element.coordinate == Coordinate(
+                            coordinate.top + height * CELL_SIZE,
+                            coordinate.left + width * CELL_SIZE
+                        )
+                    )
+                        elements.add(element)
+                }
+            }
+        }
+        return elements
     }
 }
