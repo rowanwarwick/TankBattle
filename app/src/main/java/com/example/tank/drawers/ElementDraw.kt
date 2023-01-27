@@ -56,7 +56,7 @@ class ElementDraw(val container: ConstraintLayout) {
         layoutParams.leftMargin = coordinate.left
         layoutParams.topToTop = container.id
         layoutParams.leftToLeft = container.id
-        view.setImageResource(enterMaterial.image)
+        enterMaterial.image?.let { view.setImageResource(it) }
         view.layoutParams = layoutParams
         val element = Element(material =  enterMaterial, coordinate = coordinate, width = enterMaterial.width, height = enterMaterial.height)
         view.id = element.viewId
