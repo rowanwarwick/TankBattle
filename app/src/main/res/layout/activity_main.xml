@@ -63,5 +63,17 @@
             android:layout_width="@dimen/size"
             android:layout_height="@dimen/size"
             android:src="@drawable/eagle" />
+        <ImageView
+            android:id="@+id/enemy"
+            android:layout_margin="8dp"
+            android:layout_width="@dimen/size"
+            android:layout_height="@dimen/size"
+            android:src="@drawable/enemy" />
+        <ImageView
+            android:id="@+id/respawn"
+            android:layout_margin="8dp"
+            android:layout_width="@dimen/size"
+            android:layout_height="@dimen/size"
+            android:src="@drawable/tank" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

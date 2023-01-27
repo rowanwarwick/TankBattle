@@ -48,7 +48,10 @@ class ElementDraw(val container: ConstraintLayout) {
     private fun drawView(coordinate: Coordinate){
         val view = ImageView(container.context)
         val layoutParams = ConstraintLayout.LayoutParams(enterMaterial.width * CELL_SIZE, enterMaterial.height * CELL_SIZE)
-        if (enterMaterial.onlyOne) elementsContainer.firstOrNull { it.material == enterMaterial }?.coordinate?.let { deleteFromView(it) }
+        if (enterMaterial.count != 0) {
+            val deleteElement = elementsContainer.filter { it.material == enterMaterial }
+            if (deleteElement.size >= enterMaterial.count) deleteFromView(deleteElement[0].coordinate)
+        }
         layoutParams.topMargin = coordinate.top
         layoutParams.leftMargin = coordinate.left
         layoutParams.topToTop = container.id

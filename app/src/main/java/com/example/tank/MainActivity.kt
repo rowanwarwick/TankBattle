@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity() {
         binding.concrete.setOnClickListener { elementDraw.enterMaterial = Material.CONCRETE }
         binding.grass.setOnClickListener { elementDraw.enterMaterial = Material.GRASS }
         binding.eagle.setOnClickListener { elementDraw.enterMaterial = Material.EAGLE }
+        binding.enemy.setOnClickListener { elementDraw.enterMaterial = Material.ENEMY }
+        binding.respawn.setOnClickListener { elementDraw.enterMaterial = Material.RESPAWN }
         binding.container.setOnTouchListener { _, event ->
             elementDraw.onTouchContainer(event.x, event.y)
             return@setOnTouchListener true
