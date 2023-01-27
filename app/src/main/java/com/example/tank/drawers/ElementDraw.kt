@@ -2,7 +2,6 @@ package com.example.tank.drawers
 
 import android.view.View
 import android.widget.ImageView
-import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.tank.CELL_SIZE
 import com.example.tank.R
@@ -14,7 +13,7 @@ import com.example.tank.utils.getElementOrNull
 class ElementDraw(val container: ConstraintLayout) {
 
     var enterMaterial = Material.EMPTY
-    val elementsMaterial = mutableListOf<Element>()
+    val elementsContainer = mutableListOf<Element>()
 
     fun onTouchContainer(x:Float, y:Float) {
         val topMargin = y.toInt() - (y.toInt() % CELL_SIZE)
@@ -28,11 +27,11 @@ class ElementDraw(val container: ConstraintLayout) {
     }
 
     private fun deleteView(coordinate: Coordinate){
-        val view = getElementOrNull(coordinate, elementsMaterial)
+        val view = getElementOrNull(coordinate, elementsContainer)
         if (view != null) {
             val viewDelete = container.findViewById<View>(view.viewId)
             container.removeView(viewDelete)
-            elementsMaterial.remove(view)
+            elementsContainer.remove(view)
         }
     }
 
@@ -42,7 +41,7 @@ class ElementDraw(val container: ConstraintLayout) {
     }
 
     private fun drawOrReplaceView(coordinate: Coordinate){
-        val view = getElementOrNull(coordinate, elementsMaterial)
+        val view = getElementOrNull(coordinate, elementsContainer)
         if (view == null) {
             selectMaterial(coordinate)
         } else if (view.material != enterMaterial) {
@@ -53,7 +52,7 @@ class ElementDraw(val container: ConstraintLayout) {
     private fun selectMaterial(coordinate: Coordinate) {
         when (enterMaterial) {
             Material.EAGLE -> {
-                elementsMaterial.firstOrNull { it.material == Material.EAGLE }?.coordinate?.let { deleteView(it) }
+                elementsContainer.firstOrNull { it.material == Material.EAGLE }?.coordinate?.let { deleteView(it) }
                 drawView(R.drawable.eagle, coordinate, 2, 2)
             }
             Material.BRICK -> drawView(R.drawable.brick, coordinate)
@@ -75,6 +74,15 @@ class ElementDraw(val container: ConstraintLayout) {
         view.id = viewId
         view.layoutParams = layoutParams
         container.addView(view)
-        elementsMaterial.add(Element(viewId, enterMaterial, coordinate, width, height))
+        elementsContainer.add(Element(viewId, enterMaterial, coordinate, width, height))
+    }
+
+    fun drawElementOnStartGame(elements:List<Element>?) {
+        if (elements != null) {
+            for (element in elements) {
+                enterMaterial = element.material
+                selectMaterial(element.coordinate)
+            }
+        }
     }
 }
