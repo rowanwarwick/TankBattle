@@ -20,5 +20,6 @@ enum class Material(
     EAGLE(false, false, true, 1, 2, 2, R.drawable.eagle, true),
     ENEMYBASE(true, true, false, 3, 2, 2, R.drawable.enemy1, false),
     ENEMYTANK(false, false, true, 0, 2, 2, R.drawable.enemy1, true),
-    OURRESPAWN(true, true, false, 1, 2, 2, R.drawable.tank, false)
+    OURRESPAWN(true, true, false, 1, 2, 2, R.drawable.tank, false),
+    PLAYER(false, false, true, 0, 2, 2, R.drawable.tank, true)
 }

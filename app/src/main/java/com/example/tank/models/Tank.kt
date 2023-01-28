@@ -17,7 +17,9 @@ class Tank(val element: Element, var direction: Direction) {
         if (checkPossibleMove(container, nextCoordTank, view, elementsMaterial)) {
             container.removeView(view)
             container.addView(view, 0)
+            element.coordinate = nextCoordTank
         } else {
+            element.coordinate = currentCoordTank
             layoutParams.topMargin = currentCoordTank.top
             layoutParams.leftMargin = currentCoordTank.left
         }
@@ -53,7 +55,8 @@ class Tank(val element: Element, var direction: Direction) {
             check = true
         if (check == true) {
             for (anyCord in getTankCoordinate(coordinate)){
-                val elementsOrNull = getElements(coordinate, elementsMaterial)
+                val elementsOrNull = getElements(anyCord, elementsMaterial)
+                println("элементы в ячейке ${anyCord.top} ${anyCord.left} ${elementsOrNull}")
                 if (elementsOrNull.firstOrNull{it.material.tankCanGo == false} != null) {
                     if (elementsOrNull.firstOrNull{it == element} == null) check = false
                 }

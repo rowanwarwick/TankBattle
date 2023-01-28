@@ -14,15 +14,19 @@ import com.example.tank.databinding.ActivityMainBinding
 import com.example.tank.drawers.*
 import com.example.tank.enums.Direction
 import com.example.tank.enums.Material
+import com.example.tank.models.Coordinate
+import com.example.tank.models.Element
+import com.example.tank.models.Tank
 
 const val CELL_SIZE = 50
 
 class MainActivity : AppCompatActivity() {
     private var editMode = false
+    private val tankPlayer = Tank(Element(R.id.myTank, Material.PLAYER, Coordinate(0, 0),
+        Material.PLAYER.width, Material.PLAYER.height), Direction.UP)
     private lateinit var binding: ActivityMainBinding
     private val grid by lazy { GridDraw(binding.container) }
     private val elementDraw by lazy { ElementDraw(binding.container) }
-    private val tankDraw by lazy { TankDraw(binding.container) }
     private val gunDraw by lazy { GunDraw(binding.container) }
     private val enemyDraw by lazy { EnemyDraw(binding.container) }
     private val levelStorage by lazy { LevelStorage(this as Activity) }
@@ -45,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         }
         elementDraw.drawElementOnStartGame(levelStorage.loadLevel())
         elementDraw.hideElementInGame(editMode)
-        //println(enemyDraw.searchEnemyBase(elementDraw.elementsContainer).joinToString(" "))
+        elementDraw.elementsContainer.add(tankPlayer.element)
     }
 
     fun switchEdit() {
@@ -90,18 +94,18 @@ class MainActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KEYCODE_DPAD_UP -> {
-                tankDraw.move(binding.myTank, Direction.UP, elementDraw.elementsContainer)
+                tankPlayer.move(binding.container, Direction.UP, elementDraw.elementsContainer)
             }
             KEYCODE_DPAD_DOWN -> {
-                tankDraw.move(binding.myTank, Direction.DOWN, elementDraw.elementsContainer)
+                tankPlayer.move(binding.container, Direction.DOWN, elementDraw.elementsContainer)
             }
             KEYCODE_DPAD_LEFT -> {
-                tankDraw.move(binding.myTank, Direction.LEFT, elementDraw.elementsContainer)
+                tankPlayer.move(binding.container, Direction.LEFT, elementDraw.elementsContainer)
             }
             KEYCODE_DPAD_RIGHT -> {
-                tankDraw.move(binding.myTank, Direction.RIGHT, elementDraw.elementsContainer)
+                tankPlayer.move(binding.container, Direction.RIGHT, elementDraw.elementsContainer)
             }
-            KEYCODE_SPACE -> gunDraw.bulletMove(binding.myTank, tankDraw.currectDirection, elementDraw.elementsContainer)
+            KEYCODE_SPACE -> gunDraw.bulletMove(binding.myTank, tankPlayer.direction, elementDraw.elementsContainer)
         }
         return super.onKeyDown(keyCode, event)
     }
