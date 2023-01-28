@@ -10,7 +10,7 @@ enum class Material(
     val height: Int,
     val width: Int,
     val image: Int?,
-    val visibleInPlay: Boolean,
+    val visibleInPlay: Boolean
     )
 {
     EMPTY(true , true , true , 0 , 1 , 1 , null, true) ,
@@ -18,6 +18,7 @@ enum class Material(
     CONCRETE(false, false, false, 0, 1, 1, R.drawable.concrete, true),
     GRASS(true, true, false, 0, 1, 1, R.drawable.grass, true),
     EAGLE(false, false, true, 1, 2, 2, R.drawable.eagle, true),
-    ENEMY(false, false, true, 3, 2, 2, R.drawable.enemy, false),
-    RESPAWN(false, false, true, 1, 2, 2, R.drawable.tank, false)
+    ENEMYBASE(true, true, false, 3, 2, 2, R.drawable.enemy1, false),
+    ENEMYTANK(false, false, true, 0, 2, 2, R.drawable.enemy1, true),
+    OURRESPAWN(true, true, false, 1, 2, 2, R.drawable.tank, false)
 }

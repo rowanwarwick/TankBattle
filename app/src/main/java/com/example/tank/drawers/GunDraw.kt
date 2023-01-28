@@ -9,8 +9,7 @@ import com.example.tank.R
 import com.example.tank.enums.Direction
 import com.example.tank.models.Coordinate
 import com.example.tank.models.Element
-import com.example.tank.utils.getElementOrNull
-import kotlin.text.Typography.bullet
+import com.example.tank.utils.getElements
 
 class GunDraw(val container: ConstraintLayout) {
 
@@ -39,7 +38,7 @@ class GunDraw(val container: ConstraintLayout) {
                 container.removeView(bullet)
             }
         })
-        bulletThread!!.start()
+        bulletThread.start()
     }
 
     fun coordBlockTopOrDown(coordinate: Coordinate):List<Coordinate> {
@@ -56,8 +55,7 @@ class GunDraw(val container: ConstraintLayout) {
         return listOf(Coordinate(topBlock, xCoord), Coordinate(downBlock, xCoord))
     }
 
-    fun removeElemInConteiner(element: Element?, elementsContainer: MutableList<Element>) {
-        if (element != null) {
+    fun removeElemInConteiner(element: Element, elementsContainer: MutableList<Element>) {
             if (!element.material.bulletCanGo) {
                 if (element.material.canDestroy) {
                     val activity = container.context as Activity
@@ -68,13 +66,11 @@ class GunDraw(val container: ConstraintLayout) {
                 }
                 workThread = false
             }
-        }
     }
 
     fun compareCollections(elementsContainer:MutableList<Element>, cordBlocks:List<Coordinate>) {
         cordBlocks.forEach { block ->
-            val view = getElementOrNull(block, elementsContainer)
-            removeElemInConteiner(view, elementsContainer)
+            getElements(block, elementsContainer).forEach { removeElemInConteiner(it, elementsContainer) }
         }
     }
 

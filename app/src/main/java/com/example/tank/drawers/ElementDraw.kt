@@ -1,13 +1,13 @@
 package com.example.tank.drawers
 
 import android.view.View
-import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.tank.CELL_SIZE
 import com.example.tank.enums.Material
 import com.example.tank.models.Coordinate
 import com.example.tank.models.Element
-import com.example.tank.utils.getElementOrNull
+import com.example.tank.utils.drawElement
+import com.example.tank.utils.getElements
 
 class ElementDraw(val container: ConstraintLayout) {
 
@@ -37,31 +37,21 @@ class ElementDraw(val container: ConstraintLayout) {
     }
 
     private fun drawOrReplaceView(coordinate: Coordinate){
-        val view = getElementOrNull(coordinate, elementsContainer)
-        if (view == null) {
+        val view = getElements(coordinate, elementsContainer)
+        if (view.isEmpty()) {
             drawView(coordinate)
-        } else if (view.material != enterMaterial) {
+        } else if (view[0].material != enterMaterial) {
             updateView(coordinate)
         }
     }
 
     private fun drawView(coordinate: Coordinate){
-        val view = ImageView(container.context)
-        val layoutParams = ConstraintLayout.LayoutParams(enterMaterial.width * CELL_SIZE, enterMaterial.height * CELL_SIZE)
         if (enterMaterial.count != 0) {
             val deleteElement = elementsContainer.filter { it.material == enterMaterial }
             if (deleteElement.size >= enterMaterial.count) deleteFromView(deleteElement[0].coordinate)
         }
-        layoutParams.topMargin = coordinate.top
-        layoutParams.leftMargin = coordinate.left
-        layoutParams.topToTop = container.id
-        layoutParams.leftToLeft = container.id
-        enterMaterial.image?.let { view.setImageResource(it) }
-        view.layoutParams = layoutParams
         val element = Element(material =  enterMaterial, coordinate = coordinate, width = enterMaterial.width, height = enterMaterial.height)
-        view.id = element.viewId
-        view.scaleType = ImageView.ScaleType.FIT_XY // растягивае изображения по ХУ
-        container.addView(view)
+        drawElement(container, element)
         elementsContainer.add(element)
     }
 
@@ -97,5 +87,18 @@ class ElementDraw(val container: ConstraintLayout) {
             }
         }
         return elements
+    }
+
+    fun hideElementInGame(editMode: Boolean) {
+        elementsContainer.filter { !it.material.visibleInPlay }.forEach { changeElementVisibility(it.viewId, editMode) }
+    }
+
+    private fun changeElementVisibility(viewId: Int, editMode: Boolean) {
+        val view = container.findViewById<View>(viewId)
+        if (editMode) {
+            view.visibility = View.VISIBLE
+        } else {
+            view.visibility = View.GONE
+        }
     }
 }

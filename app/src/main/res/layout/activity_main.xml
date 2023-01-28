@@ -64,13 +64,13 @@
             android:layout_height="@dimen/size"
             android:src="@drawable/eagle" />
         <ImageView
-            android:id="@+id/enemy"
+            android:id="@+id/enemy_base"
             android:layout_margin="8dp"
             android:layout_width="@dimen/size"
             android:layout_height="@dimen/size"
-            android:src="@drawable/enemy" />
+            android:src="@drawable/enemy1" />
         <ImageView
-            android:id="@+id/respawn"
+            android:id="@+id/our_respawn"
             android:layout_margin="8dp"
             android:layout_width="@dimen/size"
             android:layout_height="@dimen/size"

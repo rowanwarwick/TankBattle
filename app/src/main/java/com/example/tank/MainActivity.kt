@@ -11,10 +11,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tank.databinding.ActivityMainBinding
-import com.example.tank.drawers.ElementDraw
-import com.example.tank.drawers.GridDraw
-import com.example.tank.drawers.GunDraw
-import com.example.tank.drawers.TankDraw
+import com.example.tank.drawers.*
 import com.example.tank.enums.Direction
 import com.example.tank.enums.Material
 
@@ -27,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private val elementDraw by lazy { ElementDraw(binding.container) }
     private val tankDraw by lazy { TankDraw(binding.container) }
     private val gunDraw by lazy { GunDraw(binding.container) }
+    private val enemyDraw by lazy { EnemyDraw(binding.container) }
     private val levelStorage by lazy { LevelStorage(this as Activity) }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -39,24 +37,27 @@ class MainActivity : AppCompatActivity() {
         binding.concrete.setOnClickListener { elementDraw.enterMaterial = Material.CONCRETE }
         binding.grass.setOnClickListener { elementDraw.enterMaterial = Material.GRASS }
         binding.eagle.setOnClickListener { elementDraw.enterMaterial = Material.EAGLE }
-        binding.enemy.setOnClickListener { elementDraw.enterMaterial = Material.ENEMY }
-        binding.respawn.setOnClickListener { elementDraw.enterMaterial = Material.RESPAWN }
+        binding.enemyBase.setOnClickListener { elementDraw.enterMaterial = Material.ENEMYBASE }
+        binding.ourRespawn.setOnClickListener { elementDraw.enterMaterial = Material.OURRESPAWN }
         binding.container.setOnTouchListener { _, event ->
             elementDraw.onTouchContainer(event.x, event.y)
             return@setOnTouchListener true
         }
         elementDraw.drawElementOnStartGame(levelStorage.loadLevel())
+        elementDraw.hideElementInGame(editMode)
+        //println(enemyDraw.searchEnemyBase(elementDraw.elementsContainer).joinToString(" "))
     }
 
     fun switchEdit() {
+        editMode = !editMode
         if (editMode) {
-            grid.removeGrid()
-            binding.material.visibility = GONE
-        } else {
             grid.drawGrid()
             binding.material.visibility = VISIBLE
+        } else {
+            grid.removeGrid()
+            binding.material.visibility = GONE
         }
-        editMode = !editMode
+        elementDraw.hideElementInGame(editMode)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -74,8 +75,16 @@ class MainActivity : AppCompatActivity() {
                 levelStorage.saveLevel(elementDraw.elementsContainer)
                 return true
             }
+            R.id.play -> {
+                startGame()
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun startGame() {
+        if (!editMode) enemyDraw.startBattle(elementDraw.elementsContainer)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
