@@ -5,9 +5,8 @@ import com.example.tank.enums.Material
 import com.example.tank.models.Element
 import com.example.tank.utils.drawElement
 
-const val MAX_ENEMY = 5
-
 class EnemyDraw(val container: ConstraintLayout) {
+    val MAX_ENEMY = 5
     private var countEnemy = 0
     private var checkPlaceGenerateEnemy = 0
 
@@ -21,7 +20,6 @@ class EnemyDraw(val container: ConstraintLayout) {
         Thread(Runnable {
             while (countEnemy < MAX_ENEMY) {
                 drawEnemy(elements,enemyBase)
-                println(countEnemy)
                 countEnemy++
                 Thread.sleep(3000)
             }
