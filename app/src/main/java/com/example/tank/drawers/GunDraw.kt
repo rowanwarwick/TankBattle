@@ -26,7 +26,7 @@ class GunDraw(val container: ConstraintLayout) {
                     Direction.LEFT -> (bullet.layoutParams as ConstraintLayout.LayoutParams).leftMargin -= 25
                     Direction.RIGHT -> (bullet.layoutParams as ConstraintLayout.LayoutParams).leftMargin  += 25
                 }
-                Thread.sleep(30)
+                Thread.sleep(30 )
                 chooseDirection(elementsConteiner, direction, Coordinate((bullet.layoutParams as ConstraintLayout.LayoutParams).topMargin,
                     (bullet.layoutParams as ConstraintLayout.LayoutParams).leftMargin ))
                 (container.context as Activity).runOnUiThread{
@@ -56,16 +56,16 @@ class GunDraw(val container: ConstraintLayout) {
     }
 
     fun removeElemInConteiner(element: Element, elementsContainer: MutableList<Element>) {
-            if (!element.material.bulletCanGo) {
-                if (element.material.canDestroy) {
-                    val activity = container.context as Activity
-                    activity.runOnUiThread {
-                        container.removeView(activity.findViewById(element.viewId))
-                    }
-                    elementsContainer.remove(element)
+        if (!element.material.bulletCanGo) {
+            if (element.material.canDestroy) {
+                val activity = container.context as Activity
+                activity.runOnUiThread {
+                    container.removeView(activity.findViewById(element.viewId))
                 }
-                workThread = false
+                elementsContainer.remove(element)
             }
+            workThread = false
+        }
     }
 
     fun compareCollections(elementsContainer:MutableList<Element>, cordBlocks:List<Coordinate>) {

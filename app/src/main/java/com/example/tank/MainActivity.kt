@@ -22,13 +22,20 @@ const val CELL_SIZE = 50
 
 class MainActivity : AppCompatActivity() {
     private var editMode = false
-    private val tankPlayer = Tank(Element(R.id.myTank, Material.PLAYER, Coordinate(0, 0),
-        Material.PLAYER.width, Material.PLAYER.height), Direction.UP)
+    private val tankPlayer by lazy {
+        Tank(
+            Element(material = Material.PLAYER,
+                coordinate = elementDraw.elementsContainer
+                    .filter { it.material == Material.OURRESPAWN }
+                    .getOrNull(0)?.coordinate ?: Coordinate(0, 0)
+            ), Direction.UP
+        )
+    }
     private lateinit var binding: ActivityMainBinding
     private val grid by lazy { GridDraw(binding.container) }
     private val elementDraw by lazy { ElementDraw(binding.container) }
     private val gunDraw by lazy { GunDraw(binding.container) }
-    private val enemyDraw by lazy { EnemyDraw(binding.container) }
+    private val enemyDraw by lazy { EnemyDraw(binding.container, elementDraw.elementsContainer) }
     private val levelStorage by lazy { LevelStorage(this as Activity) }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -48,8 +55,8 @@ class MainActivity : AppCompatActivity() {
             return@setOnTouchListener true
         }
         elementDraw.drawElementOnStartGame(levelStorage.loadLevel())
+        elementDraw.drawElementOnStartGame(listOf(tankPlayer.element))
         elementDraw.hideElementInGame(editMode)
-        elementDraw.elementsContainer.add(tankPlayer.element)
     }
 
     fun switchEdit() {
@@ -76,7 +83,8 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             R.id.save -> {
-                levelStorage.saveLevel(elementDraw.elementsContainer)
+                levelStorage.saveLevel(elementDraw.elementsContainer.filter { it.material != Material.PLAYER
+                        && it.material != Material.ENEMYTANK })
                 return true
             }
             R.id.play -> {
@@ -88,7 +96,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startGame() {
-        if (!editMode) enemyDraw.startBattle(elementDraw.elementsContainer)
+        if (!editMode) enemyDraw.startBattle()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -105,7 +113,13 @@ class MainActivity : AppCompatActivity() {
             KEYCODE_DPAD_RIGHT -> {
                 tankPlayer.move(binding.container, Direction.RIGHT, elementDraw.elementsContainer)
             }
-            KEYCODE_SPACE -> gunDraw.bulletMove(binding.myTank, tankPlayer.direction, elementDraw.elementsContainer)
+            KEYCODE_SPACE -> {
+                gunDraw.bulletMove(binding.container.findViewById(tankPlayer.element.viewId), tankPlayer.direction, elementDraw.elementsContainer)
+            }
+
+            KEYCODE_0 -> {
+                println(elementDraw.elementsContainer)
+            }
         }
         return super.onKeyDown(keyCode, event)
     }

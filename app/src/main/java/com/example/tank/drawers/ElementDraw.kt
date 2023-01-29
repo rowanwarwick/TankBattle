@@ -8,6 +8,7 @@ import com.example.tank.models.Coordinate
 import com.example.tank.models.Element
 import com.example.tank.utils.drawElement
 import com.example.tank.utils.getElements
+import com.example.tank.utils.uniqId
 
 class ElementDraw(val container: ConstraintLayout) {
 
@@ -33,33 +34,38 @@ class ElementDraw(val container: ConstraintLayout) {
 
     private fun updateView(coordinate: Coordinate){
         deleteFromView(coordinate)
-        drawView(coordinate)
+        createDrawView(coordinate)
     }
 
     private fun drawOrReplaceView(coordinate: Coordinate){
         val view = getElements(coordinate, elementsContainer)
         if (view.isEmpty()) {
-            drawView(coordinate)
+            createDrawView(coordinate)
         } else if (view[0].material != enterMaterial) {
             updateView(coordinate)
         }
     }
 
-    private fun drawView(coordinate: Coordinate){
+    private fun drawView(element: Element) {
         if (enterMaterial.count != 0) {
             val deleteElement = elementsContainer.filter { it.material == enterMaterial }
             if (deleteElement.size >= enterMaterial.count) deleteFromView(deleteElement[0].coordinate)
         }
-        val element = Element(material =  enterMaterial, coordinate = coordinate, width = enterMaterial.width, height = enterMaterial.height)
         drawElement(container, element)
         elementsContainer.add(element)
+    }
+
+    private fun createDrawView(coordinate: Coordinate){
+        val element = Element(material =  enterMaterial, coordinate = coordinate)
+        uniqId(element, elementsContainer)
+        drawView(element)
     }
 
     fun drawElementOnStartGame(elements:List<Element>?) {
         if (elements != null) {
             for (element in elements) {
                 enterMaterial = element.material
-                drawView(element.coordinate)
+                drawView(element)
             }
         }
     }

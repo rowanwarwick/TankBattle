@@ -1,6 +1,7 @@
 package com.example.tank.utils
 
 import android.app.Activity
+import android.view.View
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.tank.CELL_SIZE
@@ -40,4 +41,9 @@ fun drawElement(container: ConstraintLayout, element: Element){
     (container.context as Activity).runOnUiThread {
         container.addView(view)
     }
+}
+
+fun uniqId(element: Element, elementsContainer: List<Element>) {
+    while (elementsContainer.map { it.viewId }.contains(element.viewId))
+        element.viewId = View.generateViewId()
 }
