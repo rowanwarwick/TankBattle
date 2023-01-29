@@ -4,25 +4,18 @@ import android.app.Activity
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.tank.CELL_SIZE
+import com.example.tank.drawers.GunDraw
 import com.example.tank.enums.Direction
 import com.example.tank.enums.Material
 import com.example.tank.utils.drawElement
 import com.example.tank.utils.getElements
+import com.example.tank.utils.getTanks
+import com.example.tank.utils.randomizer
 import kotlin.random.Random
 
-class Tank(val element: Element, var direction: Direction) {
-    init {
-        println(element.material)
-        println(element.coordinate)
-    }
-
+class Tank(val element: Element, var direction: Direction, val bullet: GunDraw) {
     fun move(container:ConstraintLayout, direction: Direction, elementsMaterial:MutableList<Element>) {
-        var view = container.findViewById<View>(element.viewId)
-//        if (view == null) {
-//            drawElement(container, element)
-//            view = container.findViewById<View>(element.viewId)
-//            elementsMaterial.add(element)
-//        }
+        val view = container.findViewById<View>(element.viewId)
         val layoutParams = view.layoutParams as ConstraintLayout.LayoutParams
         val currentCoordTank = Coordinate(layoutParams.topMargin, layoutParams.leftMargin)
         this.direction = direction
@@ -34,6 +27,7 @@ class Tank(val element: Element, var direction: Direction) {
                 container.addView(view, 0)
             }
             element.coordinate = nextCoordTank
+            //if (randomizer(10)) changeDirectionEnemy()
         } else {
             layoutParams.topMargin = currentCoordTank.top
             layoutParams.leftMargin = currentCoordTank.left
@@ -78,7 +72,8 @@ class Tank(val element: Element, var direction: Direction) {
             check = true
         if (check == true) {
             for (anyCord in getTankCoordinate(coordinate)){
-                val elementsOrNull = getElements(anyCord, elementsMaterial)
+                var elementsOrNull = getElements(anyCord, elementsMaterial)
+                if (elementsOrNull.isEmpty()) elementsOrNull = getTanks(anyCord, bullet.enemyDraw.enemyTanks)
                 if (elementsOrNull.firstOrNull{it.material.tankCanGo == false} != null) {
                     if (elementsOrNull.firstOrNull{it == element} == null) check = false
                 }

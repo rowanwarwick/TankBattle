@@ -68,6 +68,7 @@ class ElementDraw(val container: ConstraintLayout) {
                 drawView(element)
             }
         }
+        enterMaterial = Material.EMPTY
     }
 
     fun deleteElement(element:Element?) {

@@ -7,16 +7,24 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.tank.CELL_SIZE
 import com.example.tank.R
 import com.example.tank.enums.Direction
+import com.example.tank.enums.Material
 import com.example.tank.models.Coordinate
 import com.example.tank.models.Element
+import com.example.tank.models.Tank
 import com.example.tank.utils.getElements
+import com.example.tank.utils.getTanks
+import kotlin.text.Typography.bullet
 
-class GunDraw(val container: ConstraintLayout) {
+class GunDraw(val container: ConstraintLayout, val elementsConteiner: MutableList<Element>, val enemyDraw: EnemyDraw) {
 
     private var workThread = true
+    private lateinit var tank: Tank
 
-    fun bulletMove (myTank: View, direction: Direction, elementsConteiner: MutableList<Element>) {
+    fun bulletMove (tank: Tank) {
+        this.tank = tank
+        val direction = tank.direction
         val bulletThread = Thread( Runnable {
+            val myTank = container.findViewById<View>(this.tank.element.viewId) ?: return@Runnable
             val bullet = bullet(myTank, direction)
             workThread = true
             while (checkOutBullet(bullet, Coordinate(bullet.top, bullet.left)) && workThread) {
@@ -27,7 +35,7 @@ class GunDraw(val container: ConstraintLayout) {
                     Direction.RIGHT -> (bullet.layoutParams as ConstraintLayout.LayoutParams).leftMargin  += 25
                 }
                 Thread.sleep(30 )
-                chooseDirection(elementsConteiner, direction, Coordinate((bullet.layoutParams as ConstraintLayout.LayoutParams).topMargin,
+                chooseDirection(direction, Coordinate((bullet.layoutParams as ConstraintLayout.LayoutParams).topMargin,
                     (bullet.layoutParams as ConstraintLayout.LayoutParams).leftMargin ))
                 (container.context as Activity).runOnUiThread{
                     container.removeView(bullet)
@@ -55,32 +63,43 @@ class GunDraw(val container: ConstraintLayout) {
         return listOf(Coordinate(topBlock, xCoord), Coordinate(downBlock, xCoord))
     }
 
-    fun removeElemInConteiner(element: Element, elementsContainer: MutableList<Element>) {
+    fun removeElemInConteiner(element: Element) {
         if (!element.material.bulletCanGo) {
-            if (element.material.canDestroy) {
-                val activity = container.context as Activity
-                activity.runOnUiThread {
-                    container.removeView(activity.findViewById(element.viewId))
+            if (!(tank.element.material == Material.ENEMYTANK && element.material == Material.ENEMYTANK))
+                if (element.material.canDestroy) {
+                    val activity = container.context as Activity
+                    activity.runOnUiThread {
+                        container.removeView(activity.findViewById(element.viewId))
+                    }
+                    elementsConteiner.remove(element)
+                    removeTank(element)
                 }
-                elementsContainer.remove(element)
-            }
             workThread = false
         }
     }
 
-    fun compareCollections(elementsContainer:MutableList<Element>, cordBlocks:List<Coordinate>) {
-        cordBlocks.forEach { block ->
-            getElements(block, elementsContainer).forEach { removeElemInConteiner(it, elementsContainer) }
+    private fun removeTank(element: Element) {
+        val tanksElement = enemyDraw.enemyTanks.map { it.element }
+        val tankIndex = tanksElement.indexOf(element)
+        enemyDraw.removeTank(tankIndex)
+    }
+
+    fun compareCollections(cordBlocks:List<Coordinate>) {
+        for (coordinate in cordBlocks) {
+            var element = getElements(coordinate, elementsConteiner)
+            if (element.isEmpty())
+                element = getTanks(coordinate, enemyDraw.enemyTanks)
+            element.forEach { if (it != tank.element) removeElemInConteiner(it) }
         }
     }
 
-    fun chooseDirection(elementsContainer:MutableList<Element>, direction: Direction, bullet: Coordinate){
+    fun chooseDirection(direction: Direction, bullet: Coordinate){
         when (direction) {
             Direction.UP, Direction.DOWN -> {
-                compareCollections(elementsContainer, coordBlockTopOrDown(bullet))
+                compareCollections(coordBlockTopOrDown(bullet))
             }
             Direction.LEFT, Direction.RIGHT -> {
-                compareCollections(elementsContainer, coordBlockRightOrLeft(bullet))
+                compareCollections(coordBlockRightOrLeft(bullet))
             }
         }
     }

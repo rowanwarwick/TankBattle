@@ -28,13 +28,12 @@ class MainActivity : AppCompatActivity() {
                 coordinate = elementDraw.elementsContainer
                     .filter { it.material == Material.OURRESPAWN }
                     .getOrNull(0)?.coordinate ?: Coordinate(0, 0)
-            ), Direction.UP
+            ), Direction.UP, GunDraw(binding.container, elementDraw.elementsContainer, enemyDraw)
         )
     }
     private lateinit var binding: ActivityMainBinding
     private val grid by lazy { GridDraw(binding.container) }
     private val elementDraw by lazy { ElementDraw(binding.container) }
-    private val gunDraw by lazy { GunDraw(binding.container) }
     private val enemyDraw by lazy { EnemyDraw(binding.container, elementDraw.elementsContainer) }
     private val levelStorage by lazy { LevelStorage(this as Activity) }
 
@@ -51,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         binding.enemyBase.setOnClickListener { elementDraw.enterMaterial = Material.ENEMYBASE }
         binding.ourRespawn.setOnClickListener { elementDraw.enterMaterial = Material.OURRESPAWN }
         binding.container.setOnTouchListener { _, event ->
-            elementDraw.onTouchContainer(event.x, event.y)
+            if (editMode) elementDraw.onTouchContainer(event.x, event.y)
             return@setOnTouchListener true
         }
         elementDraw.drawElementOnStartGame(levelStorage.loadLevel())
@@ -114,7 +113,7 @@ class MainActivity : AppCompatActivity() {
                 tankPlayer.move(binding.container, Direction.RIGHT, elementDraw.elementsContainer)
             }
             KEYCODE_SPACE -> {
-                gunDraw.bulletMove(binding.container.findViewById(tankPlayer.element.viewId), tankPlayer.direction, elementDraw.elementsContainer)
+                tankPlayer.bullet.bulletMove(tankPlayer)
             }
 
             KEYCODE_0 -> {

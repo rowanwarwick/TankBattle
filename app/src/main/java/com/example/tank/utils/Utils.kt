@@ -7,10 +7,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.tank.CELL_SIZE
 import com.example.tank.models.Coordinate
 import com.example.tank.models.Element
+import com.example.tank.models.Tank
+import kotlin.random.Random
 
 fun getElements(coordinate: Coordinate, elementsMaterial:List<Element>):List<Element> {
     val list = mutableListOf<Element>()
-    for (element in elementsMaterial) {
+        for (element in elementsMaterial) {
         loop@ for (height in 0 until element.height) {
             for (width in 0 until element.width) {
                 val searchCord = Coordinate(
@@ -25,6 +27,10 @@ fun getElements(coordinate: Coordinate, elementsMaterial:List<Element>):List<Ele
         }
     }
     return list
+}
+
+fun getTanks(coordinate: Coordinate, tankList:List<Tank>):List<Element> {
+    return getElements(coordinate, tankList.map { it.element })
 }
 
 fun drawElement(container: ConstraintLayout, element: Element){
@@ -47,3 +53,5 @@ fun uniqId(element: Element, elementsContainer: List<Element>) {
     while (elementsContainer.map { it.viewId }.contains(element.viewId))
         element.viewId = View.generateViewId()
 }
+
+fun randomizer(chance:Int) = Random.nextInt(100) <= chance
